@@ -57,7 +57,7 @@ more.
   };
 
   smtp.sendMail(mailOptions, (error, response) => {
-    if (error) return error;
+    if (error) return new Error();
     return response;
   });
 };
