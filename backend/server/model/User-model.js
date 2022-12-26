@@ -1,15 +1,20 @@
+require("dotenv").config();
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const UserSchema = new mongoose.Schema(
   {
     first_name: {
       type: String,
       required: [true, "first name is required"],
+      minlength: 3,
     },
 
     last_name: {
       type: String,
       required: [true, "last name is required"],
+      minlength: 3,
     },
 
     username: {
@@ -35,6 +40,7 @@ const UserSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "password is required"],
+      minlength: 6,
     },
 
     picture: {
@@ -164,5 +170,19 @@ const UserSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+UserSchema.pre("save", async function () {
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
+
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  const isMatch = await bcrypt.compare(candidatePassword, this.password);
+  return isMatch;
+};
+
+UserSchema.methods.createJWT = async function (expireTime) {
+  return jwt.sign({ userID: this._id.toString() }, process.env.JWT_SECRET, { expiresIn: expireTime });
+};
 
 module.exports = mongoose.model("User", UserSchema);

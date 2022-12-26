@@ -1,6 +1,8 @@
 // environment variable
 require("dotenv").config();
 
+require("express-async-errors");
+
 // security packages
 const helmet = require("helmet");
 const cors = require("cors");
@@ -14,6 +16,7 @@ const fs = require("fs");
 // local imports
 const connectDB = require("./db/connectDB");
 const routeNotFoundMiddleware = require("./middleware/route-not-found-middleware");
+const errorHandlerMiddleware = require("./middleware/errorHandler-middleware");
 
 const app = express();
 
@@ -26,8 +29,9 @@ app.use(xss());
 // Route Middlewares using dynamically
 fs.readdirSync("./router").map((routes) => app.use("/api/v1", require(`./router/${routes}`)));
 
-// error handling middleware
+// error handling middleware and wrong routes handler
 app.use(routeNotFoundMiddleware);
+app.use(errorHandlerMiddleware);
 
 // starting server
 const PORT = process.env.PORT || 5000;
