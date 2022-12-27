@@ -6,7 +6,7 @@ const { google } = require("googleapis");
 
 const { OAuth2 } = google.auth;
 
-const { EMAIL, MAILING_ID, MAILING_REFRESH, MAILING_SECRET } = process.env;
+const { ADMIN_EMAIL, MAILING_ID, MAILING_REFRESH, MAILING_SECRET } = process.env;
 
 const oauthLink = "https://developers.google.com/oauthplayground";
 
@@ -20,7 +20,7 @@ exports.sendVerificationEmail = (email, name, url) => {
     service: "gmail",
     auth: {
       type: "OAuth2",
-      user: EMAIL,
+      user: ADMIN_EMAIL,
       clientId: MAILING_ID,
       clientSecret: MAILING_SECRET,
       refreshToken: MAILING_REFRESH,
@@ -50,7 +50,7 @@ more.
 </div>`;
 
   const mailOptions = {
-    from: EMAIL,
+    from: ADMIN_EMAIL,
     to: email,
     subject: "Sharebook email verification",
     html: emailBodyHtml,
