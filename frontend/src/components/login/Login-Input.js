@@ -1,7 +1,7 @@
 import { ErrorMessage, useField } from "formik";
 import { useMediaQuery } from "react-responsive";
 
-import Style from "./Login-input.module.css";
+import Style from "./Login-Input.module.css";
 
 const LoginInput = (props) => {
   const [field, meta] = useField(props);
