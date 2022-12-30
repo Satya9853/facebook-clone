@@ -9,8 +9,8 @@ const { sendVerificationEmail } = require("../helper/mailer");
 
 exports.register = async (req, res, next) => {
   // creating username
-  const { first_name, last_name } = req.body;
-  let username = (first_name + last_name).replace(/\s/g, "");
+  const { firstName, lastName } = req.body;
+  let username = (firstName + lastName).replace(/\s/g, "");
   req.body.username = await generateUsername(username);
 
   // creating new user
@@ -20,7 +20,7 @@ exports.register = async (req, res, next) => {
   // generating email verification JWT Token
   const emailVerificationToken = await user.createJWT("30m");
   const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
-  response = sendVerificationEmail(user.email, user.first_name, url);
+  response = sendVerificationEmail(user.email, user.firstName, url);
   if (response instanceof Error) throw response;
 
   //Acess Token
@@ -30,12 +30,12 @@ exports.register = async (req, res, next) => {
     user: {
       id: user._id,
       username: user.username,
-      first_name: user.first_name,
-      last_name: user.last_name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       verified: user.verified,
       picture: user.picture,
-      message: "Registered Successfully ! Please activate your email to start",
     },
+    message: "Registered Successfully ! Please activate your email to start",
     token,
   });
 };
@@ -59,8 +59,8 @@ exports.login = async (req, res, next) => {
   const user = await UserModel.findOne({ email });
   if (!user) throw new NotFoundError(`The email address ${email} is not connected to any account`);
 
-  const isPasswordCorrect = user.comparePassword(password);
-  if (!isPasswordCorrect) throw new UnaunthenticatedError("Invalid Password");
+  const isPasswordCorrect = await user.comparePassword(password);
+  if (!isPasswordCorrect) throw new UnaunthenticatedError("The Password you entered is incorrect. Please try again");
 
   const token = await user.createJWT("7d");
 
@@ -68,11 +68,10 @@ exports.login = async (req, res, next) => {
     user: {
       id: user._id,
       username: user.username,
-      first_name: user.first_name,
-      last_name: user.last_name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       verified: user.verified,
       picture: user.picture,
-      message: "Registered Successfully ! Please activate your email to start",
     },
     token,
   });

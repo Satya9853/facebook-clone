@@ -18,8 +18,11 @@ const errorHandlerMiddleware = (error, req, res, next) => {
 
   if (error.name === "ValidationError") {
     const fieldName = error.message.split(":")[1].trim();
+
     if (fieldName === "email") {
       customError.message = error.message.split(":")[2].trim();
+    } else if (["bDay", "bMonth", "bYear"].includes(fieldName)) {
+      customError.message = error.errors[fieldName].message;
     } else {
       customError.message = `${fieldName} should be of atleast ${error.errors[fieldName].properties.minlength} characters`;
     }
