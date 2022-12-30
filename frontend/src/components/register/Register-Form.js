@@ -33,6 +33,7 @@ const RegisterForm = (props) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
+
   const navigate = useNavigate();
 
   const handleRegisterChange = (event) => {
