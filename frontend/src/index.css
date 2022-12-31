@@ -54,7 +54,6 @@ a {
   cursor: pointer;
 }
 /* Buttons */
-
 .blur {
   position: fixed;
   top: 0;
@@ -63,4 +62,21 @@ a {
   bottom: 0;
   background: rgba(255, 255, 255, 0.768);
   z-index: 99;
+}
+/* Buttons */
+
+/* Hover */
+.hover1:hover {
+  background: var(--bg-secondary);
+}
+
+.hover2:hover {
+  background: var(--bg-third);
+}
+/* Hover */
+
+.card {
+  height: 500px;
+  width: 500px;
+  background: red;
 }
