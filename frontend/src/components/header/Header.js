@@ -1,14 +1,25 @@
-import React, { useState } from "react";
-import Style from "./Header.module.css";
-import { ArrowDown, Friends, Gaming, HomeActive, Logo, Market, Menu, Notifications, Search, Watch, Messenger } from "../../svg";
-import { Link } from "react-router-dom";
+import React, { useRef, useState } from "react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+
+import useClickOutside from "../shared/hooks/clickOutside-hook";
+
+import { ArrowDown, Friends, Gaming, HomeActive, Logo, Market, Menu, Notifications, Search, Watch, Messenger } from "../../svg";
 import SearchMenu from "./SearchMenu";
+import AllMenu from "./AllMenu/AllMenu";
+import UserMenu from "./UserMenu/UserMenu";
+
+import Style from "./Header.module.css";
 
 const COLOR = "#65676b";
 
 const Header = () => {
   const [showSearchMenu, setShowSearchMenu] = useState(false);
+  const [showAllMenu, setShowAllMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const allMenuRef = useRef(null);
+  const userMenuRef = useRef(null);
 
   const user = useSelector((state) => state.user);
 
@@ -19,6 +30,25 @@ const Header = () => {
   const hideSearchMenuHandler = () => {
     setShowSearchMenu(false);
   };
+
+  const showAllMenuHandler = () => {
+    setShowAllMenu((prev) => !prev);
+  };
+
+  const hideAllMenuHandler = () => {
+    setShowAllMenu(false);
+  };
+
+  const showUserMenuHandler = () => {
+    setShowUserMenu((prev) => !prev);
+  };
+
+  const hideUserMenuHandler = () => {
+    setShowUserMenu(false);
+  };
+
+  useClickOutside(allMenuRef, hideAllMenuHandler);
+  useClickOutside(userMenuRef, hideUserMenuHandler);
 
   return (
     <header>
@@ -57,8 +87,11 @@ const Header = () => {
           <img src={user?.user?.picture} alt="profile" />
           <span>{user?.user?.firstName}</span>
         </Link>
-        <div className={`${Style["circle_icon"]} hover1`}>
-          <Menu />
+        <div className={`${Style["circle_icon"]} hover1 ${showAllMenu ? Style["active_header"] : ""}`} ref={allMenuRef}>
+          <div onClick={showAllMenuHandler}>
+            <Menu />
+          </div>
+          {showAllMenu && <AllMenu hideAllMenuHandler={hideAllMenuHandler} />}
         </div>
         <div className={`${Style["circle_icon"]} hover1`}>
           <Messenger />
@@ -67,8 +100,11 @@ const Header = () => {
           <Notifications />
           <div className={Style["right_notification"]}>5</div>
         </div>
-        <div className={`${Style["circle_icon"]} hover1`}>
-          <ArrowDown />
+        <div className={`${Style["circle_icon"]} hover1 ${showUserMenu ? Style["active_header"] : ""}`} ref={userMenuRef}>
+          <div onClick={showUserMenuHandler}>
+            <ArrowDown />
+          </div>
+          {showUserMenu && <UserMenu user={user.user} />}
         </div>
       </div>
     </header>

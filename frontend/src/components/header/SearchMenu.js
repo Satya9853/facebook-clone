@@ -30,7 +30,7 @@ const SearchMenu = (props) => {
   };
 
   return (
-    <div className={`${Style["header_left"]} ${Style["search_area"]} ${Style["scrollbar"]}`} ref={searchMenuRef}>
+    <div className={`${Style["header_left"]} ${Style["search_area"]} scrollbar`} ref={searchMenuRef}>
       <div className={Style["search_wrap"]}>
         <div className={Style["header_logo"]}>
           <div className={`${Style["circle"]} hover1`} onClick={props.hideSearchMenuHandler}>
@@ -51,7 +51,7 @@ const SearchMenu = (props) => {
         <a>Edit</a>
       </div>
       <div className={Style["search_history"]}></div>
-      <div className={`${Style["search_history"]} ${Style["scrollbar"]}`}></div>
+      <div className={`${Style["search_history"]} scrollbar`}></div>
     </div>
   );
 };
