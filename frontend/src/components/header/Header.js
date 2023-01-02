@@ -1,5 +1,4 @@
 import React, { useRef, useState } from "react";
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 import useClickOutside from "../shared/hooks/clickOutside-hook";
@@ -13,15 +12,13 @@ import Style from "./Header.module.css";
 
 const COLOR = "#65676b";
 
-const Header = () => {
+const Header = ({ user }) => {
   const [showSearchMenu, setShowSearchMenu] = useState(false);
   const [showAllMenu, setShowAllMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   const allMenuRef = useRef(null);
   const userMenuRef = useRef(null);
-
-  const user = useSelector((state) => state.user);
 
   const showSearchMenuHandler = () => {
     setShowSearchMenu(true);
@@ -89,7 +86,9 @@ const Header = () => {
         </Link>
         <div className={`${Style["circle_icon"]} hover1 ${showAllMenu ? Style["active_header"] : ""}`} ref={allMenuRef}>
           <div onClick={showAllMenuHandler}>
-            <Menu />
+            <div style={{ transform: "translateY(2px)" }}>
+              <Menu />
+            </div>
           </div>
           {showAllMenu && <AllMenu hideAllMenuHandler={hideAllMenuHandler} />}
         </div>
@@ -102,7 +101,9 @@ const Header = () => {
         </div>
         <div className={`${Style["circle_icon"]} hover1 ${showUserMenu ? Style["active_header"] : ""}`} ref={userMenuRef}>
           <div onClick={showUserMenuHandler}>
-            <ArrowDown />
+            <div style={{ transform: "translateY(2px)" }}>
+              <ArrowDown />
+            </div>
           </div>
           {showUserMenu && <UserMenu user={user.user} />}
         </div>

@@ -3,14 +3,21 @@ import { Routes, Route } from "react-router-dom";
 import UserLogin from "./pages/login/User-login";
 import UserProfile from "./pages/profile/User-profile";
 import Home from "./pages/home/Home";
+import LoggedInRoutes from "./routes/LoggedIn-routes";
+import NotLoggedInRoutes from "./routes/NotLoggedIn-routes";
 
 function App() {
   return (
     <div>
       <Routes>
-        <Route path="/" element={<Home />} excat={true} />
-        <Route path="/login" element={<UserLogin />} excat={true} />
-        <Route path="/profile" element={<UserProfile />} excat={true} />
+        {/*if there is a user then LoggedinRoute will return an outlet component which will allow to render the child component else it will return the login component and that will be rendered*/}
+        <Route element={<LoggedInRoutes />}>
+          <Route path="/" element={<Home />} excat={true} />
+          <Route path="/profile" element={<UserProfile />} excat={true} />
+        </Route>
+        <Route element={<NotLoggedInRoutes />}>
+          <Route path="/login" element={<UserLogin />} excat={true} />
+        </Route>
       </Routes>
     </div>
   );
