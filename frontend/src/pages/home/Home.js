@@ -2,13 +2,21 @@ import { useSelector } from "react-redux";
 import Header from "../../components/header/Header";
 import LeftHome from "../../components/home/left/Left-Home";
 import RightHome from "../../components/home/right/Right-Home";
+import Stories from "../../components/home/stories/Stories";
+import CreatePost from "../../components/createPost/CreatePost";
+
+import Style from "./Home.module.css";
 
 const Home = () => {
   const user = useSelector((state) => state.user);
   return (
-    <div>
+    <div className={Style["home"]}>
       <Header user={user} />
       <LeftHome user={user} />
+      <div className={Style["home_middle"]}>
+        <Stories />
+        <CreatePost user={user} />
+      </div>
       <RightHome user={user} />
     </div>
   );

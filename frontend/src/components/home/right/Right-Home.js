@@ -15,13 +15,13 @@ const RightHome = (props) => {
         <div className={Style["contacts_header"]}>
           <div className={Style["contacts_header_left"]}>Contacts</div>
           <div className={Style["contacts_header_right"]}>
-            <div className={`${Style["contacts_circle"]} hover1`}>
+            <div className={`${Style["contacts_circle"]} hover2`}>
               <NewRoom color={COLOR} />
             </div>
-            <div className={`${Style["contacts_circle"]} hover1`}>
+            <div className={`${Style["contacts_circle"]} hover2`}>
               <Search color={COLOR} />
             </div>
-            <div className={`${Style["contacts_circle"]} hover1`}>
+            <div className={`${Style["contacts_circle"]} hover2`}>
               <Dots color={COLOR} />
             </div>
           </div>

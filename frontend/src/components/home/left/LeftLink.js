@@ -4,7 +4,7 @@ import Style from "./Left-Home.module.css";
 
 const LeftLink = (props) => {
   return (
-    <div className={`${Style["left_link"]} hover1`}>
+    <div className={`${Style["left_link"]} hover2`}>
       <img src={`../../../left/${props.image}.png`} alt="links" />
       {props.notification !== undefined ? (
         <div className={Style["col"]}>

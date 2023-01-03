@@ -19,3 +19,9 @@
 .shortcut_item span {
   margin-bottom: 3px;
 }
+
+@media (max-width: 1030px) {
+  .shortcut_item span {
+    display: none;
+  }
+}

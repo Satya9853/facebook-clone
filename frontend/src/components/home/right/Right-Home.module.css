@@ -56,3 +56,47 @@
 .contacts_list {
   padding: 5px;
 }
+
+@media (max-width: 1175px) {
+  .right_home {
+    width: 18vw;
+  }
+}
+
+@media (max-width: 1030px) {
+  .right_home {
+    width: 20vw;
+  }
+
+  .contacts_header_right {
+    right: 10%;
+  }
+
+  .contacts_circle {
+    width: 20px;
+  }
+}
+
+@media (max-width: 960px) {
+  .right_home {
+    left: 78%;
+    width: 20vw;
+  }
+
+  .splitter1 {
+    width: 20vw;
+  }
+  .contacts_circle {
+    width: 30px;
+  }
+
+  .contacts_header_right {
+    right: 0;
+  }
+}
+
+@media (max-width: 885px) {
+  .right_home {
+    display: none;
+  }
+}

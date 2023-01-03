@@ -12,7 +12,7 @@ const LeftHome = (props) => {
 
   return (
     <div className={`${Style["left_home"]} scrollbar`}>
-      <Link to="/profile" className={`${Style["left_link"]} hover1`}>
+      <Link to="/profile" className={`${Style["left_link"]} hover2`}>
         <img src={props.user?.user?.picture} alt="user" />
         <span>
           {props.user?.user?.firstName} {props.user?.user?.lastName}
@@ -22,7 +22,7 @@ const LeftHome = (props) => {
         <LeftLink image={item.img} text={item.text} notification={item.notification} key={index} />
       ))}
       {!showMore && (
-        <div className={`${Style["left_link"]} hover1`} onClick={() => setShowMore(true)}>
+        <div className={`${Style["left_link"]} hover2`} onClick={() => setShowMore(true)}>
           <div className="small_circle">
             <ArrowDown1 />
           </div>
@@ -34,7 +34,7 @@ const LeftHome = (props) => {
           {leftHomeData.slice(8, leftHomeData.length).map((item, index) => (
             <LeftLink image={item.img} text={item.text} notification={item.notification} key={index} />
           ))}
-          <div className={`${Style["left_link"]} hover1`} onClick={() => setShowMore(false)}>
+          <div className={`${Style["left_link"]} hover2`} onClick={() => setShowMore(false)}>
             <div className={`${Style["rotate360"]} small_circle`}>
               <ArrowDown1 />
             </div>
