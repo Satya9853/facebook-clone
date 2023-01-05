@@ -31,12 +31,12 @@ const LoginFrom = (props) => {
 
   /// Send Http request
   const sendHttpRequest = async () => {
-    setIsLoading(true);
     const URL = `${process.env.REACT_APP_BACKEND_URL}/login`;
     const body = { ...user };
     try {
+      setIsLoading(true);
       const response = await axios.post(URL, body);
-      const { user, token } = response.data;
+      const { user } = response.data;
       setIsLoading(false);
       setError("");
       dispatch(login(user));
@@ -84,7 +84,7 @@ const LoginFrom = (props) => {
           <Formik enableReinitialize initialValues={{ ...user }} validationSchema={loginValidation} onSubmit={loginSubmitHandler}>
             {formikHtml}
           </Formik>
-          <Link to="/forgot" className={Style["forgot_password"]}>
+          <Link to="/reset" className={Style["forgot_password"]}>
             Forgotten Password?
           </Link>
           <DotLoader color="#1876f2" loading={isLoading} size={30} />

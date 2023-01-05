@@ -3,9 +3,11 @@ const jwt = require("jsonwebtoken");
 const { StatusCodes } = require("http-status-codes");
 
 const UserModel = require("../model/User-model");
-const { BadRequestError, NotFoundError, UnaunthenticatedError } = require("../errors/error-index");
+const CodeModel = require("../model/Code-model");
+const { sendVerificationEmail, sendVerificationCode } = require("../helper/mailer");
 const generateUsername = require("../helper/generateUsername");
-const { sendVerificationEmail } = require("../helper/mailer");
+const generateCode = require("../helper/generateCode");
+const { BadRequestError, NotFoundError, UnaunthenticatedError } = require("../errors/error-index");
 
 exports.register = async (req, res, next) => {
   // creating username
@@ -34,17 +36,23 @@ exports.register = async (req, res, next) => {
       lastName: user.lastName,
       verified: user.verified,
       picture: user.picture,
+      token,
     },
     message: "Registered Successfully ! Please activate your email to start",
-    token,
   });
 };
 
 exports.activateAccount = async (req, res, next) => {
-  const { token } = req.body;
+  const { token } = req.body.token;
+  if (!token) throw new BadRequestError("Please provide the token");
+
   const { userID } = jwt.verify(token, process.env.JWT_SECRET);
+  const loggedUser = req.user;
+
+  if (loggedUser._id.toString() !== userID) throw new BadRequestError("You don't have the authorization to complete this operation");
 
   const user = await UserModel.findById(userID);
+  if (!user) throw new UnaunthenticatedError("Invalid user, please create your account first");
   const isVerified = user.verified;
   if (isVerified) throw new BadRequestError(`The Email-Id ${user.email} is already verified`);
   await user.updateOne({ verified: true });
@@ -72,7 +80,82 @@ exports.login = async (req, res, next) => {
       lastName: user.lastName,
       verified: user.verified,
       picture: user.picture,
+      token,
     },
-    token,
   });
+};
+
+exports.resendVerification = async (req, res, next) => {
+  const loggedUser = req.user;
+
+  if (loggedUser.verified === true) throw new BadRequestError(`The Email-Id ${user.email} is already verified`);
+
+  const emailVerificationToken = await loggedUser.createJWT("30m");
+  const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
+  response = sendVerificationEmail(loggedUser.email, loggedUser.firstName, url);
+  if (response instanceof Error) throw response;
+  res.status(StatusCodes.OK).json({ message: "Email verification link has been sent to your email" });
+};
+
+exports.searchUser = async (req, res, next) => {
+  const { email } = req.body;
+  if (!email) throw new BadRequestError("Please provide an email");
+
+  const user = await UserModel.findOne({ email }).select("-password");
+
+  if (!user) throw new BadRequestError("Account does not exist ");
+
+  res.status(StatusCodes.OK).json({ email: user.email, picture: user.picture });
+};
+
+exports.resetPasswordCode = async (req, res, next) => {
+  const { email } = req.body;
+  if (!email) throw new BadRequestError("Please provide an email");
+
+  const user = await UserModel.findOne({ email }).select("-password");
+  if (!user) throw new BadRequestError("Account does not exist");
+
+  await CodeModel.findOneAndRemove({ user: user._id });
+
+  const code = generateCode(5);
+  if (!code) throw new Error();
+
+  const createdCode = await CodeModel.create({ code, user: user._id });
+  if (!createdCode) throw new Error();
+
+  const response = sendVerificationCode(user.email, user.firstName, createdCode.code);
+  if (response instanceof Error) throw new Error();
+
+  res.status(StatusCodes.OK).json({ message: "An email verification code has been sent to your email" });
+};
+
+exports.verifyResetCode = async (req, res, next) => {
+  const { code, email } = req.body;
+
+  if (!code || !email) throw new BadRequestError("Please provide the reset code and email");
+
+  const user = await UserModel.findOne({ email });
+  if (!user) throw new BadRequestError("Account does not exist");
+
+  const dbCode = await CodeModel.findOne({ user: user._id });
+
+  console.log(code, dbCode.code);
+
+  if (code !== dbCode.code) throw new BadRequestError("Verification code is wrong");
+
+  res.status(StatusCodes.OK).json({ message: "Verification Code matched" });
+};
+
+exports.changePassword = async (req, res, next) => {
+  const { email, password, confirmPassword } = req.body;
+  if (!email || !password || !confirmPassword) throw new BadRequestError("Please provide email, password and confirm Password");
+
+  if (password !== confirmPassword) throw new BadRequestError("Password and confirm Password does not match");
+
+  const user = await UserModel.findOne({ email });
+  if (!user) throw new BadRequestError("Account does not exist");
+  user.password = password;
+  await user.save();
+
+  res.status(StatusCodes.OK).json({ message: "Password has been successfully changed" });
 };

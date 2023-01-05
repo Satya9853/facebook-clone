@@ -51,7 +51,7 @@ const RegisterForm = (props) => {
     const body = { ...user };
     try {
       const response = await axios.post(URL, body);
-      const { user, message, token } = response.data;
+      const { user, message } = response.data;
 
       setIsLoading(false);
       setError("");

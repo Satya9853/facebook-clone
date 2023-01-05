@@ -5,6 +5,8 @@ import UserProfile from "./pages/profile/User-profile";
 import Home from "./pages/home/Home";
 import LoggedInRoutes from "./routes/LoggedIn-routes";
 import NotLoggedInRoutes from "./routes/NotLoggedIn-routes";
+import Activate from "./pages/home/Activate";
+import Reset from "./pages/reset/Reset";
 
 function App() {
   return (
@@ -14,10 +16,12 @@ function App() {
         <Route element={<LoggedInRoutes />}>
           <Route path="/" element={<Home />} excat={true} />
           <Route path="/profile" element={<UserProfile />} excat={true} />
+          <Route path="/activate/:token" element={<Activate />} />
         </Route>
         <Route element={<NotLoggedInRoutes />}>
           <Route path="/login" element={<UserLogin />} excat={true} />
         </Route>
+        <Route path="/reset" element={<Reset />} />
       </Routes>
     </div>
   );

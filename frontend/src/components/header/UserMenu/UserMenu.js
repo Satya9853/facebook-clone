@@ -1,15 +1,27 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import SettingPrivacyMenu from "./SettingPrivacy-Menu";
 import HelpSupportMenu from "./HelpSupport-Menu";
+import DisplayAccessibilityMenu from "./DisplayAccessibility-Menu";
+import { useDispatch } from "react-redux";
 
 import Style from "./UserMenu.module.css";
-import DisplayAccessibilityMenu from "./DisplayAccessibility-Menu";
+import Cookies from "js-cookie";
+import { logout } from "../../../reducers/User-slice";
 
 const UserMenu = (props) => {
   // Here we are using numbers so that according to the number we show a particular menu example for 0 we will show the outer menu then for 1 we will show the settings and privacy extended Menu
   const [visible, setVisible] = useState(0);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const logoutHandler = () => {
+    Cookies.set("user", "");
+    dispatch(logout());
+    navigate("/login");
+  };
 
   return (
     <div className={Style["menu"]}>
@@ -62,7 +74,7 @@ const UserMenu = (props) => {
               <i className="right_icon"></i>
             </div>
           </div>
-          <div className={`${Style["menu_item"]} hover3`}>
+          <div className={`${Style["menu_item"]} hover3`} onClick={logoutHandler}>
             <div className="small_circle">
               <i className="logout_filled_icon"></i>
             </div>

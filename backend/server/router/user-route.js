@@ -1,9 +1,32 @@
-const { register, activateAccount, login } = require("../controller/user-controller");
+const {
+  register,
+  activateAccount,
+  login,
+  resendVerification,
+  searchUser,
+  resetPasswordCode,
+  verifyResetCode,
+  changePassword,
+} = require("../controller/user-controller");
+
+const authenticationMiddleware = require("../middleware/authentication-middleware");
 
 const Route = require("express").Router();
 
 Route.route("/register").post(register);
-Route.route("/activate").post(activateAccount);
+
+Route.route("/activate").post(authenticationMiddleware, activateAccount);
+
 Route.route("/login").post(login);
+
+Route.route("/resendVerification").get(authenticationMiddleware, resendVerification);
+
+Route.route("/findUser").post(searchUser);
+
+Route.route("/sendResetCodeVerification").post(resetPasswordCode);
+
+Route.route("/verifyResetCode").post(verifyResetCode);
+
+Route.route("/changePassword").post(changePassword);
 
 module.exports = Route;

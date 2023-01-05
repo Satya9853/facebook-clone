@@ -32,7 +32,9 @@ const LoginInput = (props) => {
   return (
     <div className={Style["input_wrap"]}>
       {meta.touched && meta.error && !props.bottom && errorMessageDiv}
+
       <input className={meta.touched && meta.error ? Style["input_error_border"] : ""} {...field} {...props} />
+
       {meta.touched && meta.error && props.bottom && errorMessageDiv}
 
       {meta.touched && meta.error && <i className="error_icon" style={{ top: `${!props.bottom && !desktopView ? "63%" : "15px"}` }}></i>}

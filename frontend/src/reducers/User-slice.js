@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 
 const userSlice = createSlice({
@@ -8,9 +8,17 @@ const userSlice = createSlice({
     login(state, action) {
       state.user = action.payload;
     },
+
+    verify(state, action) {
+      state.user = { ...current(state).user, verified: action.payload.verified };
+    },
+
+    logout(state, action) {
+      return (state = null);
+    },
   },
 });
 
 export default userSlice.reducer;
 
-export const { login } = userSlice.actions;
+export const { login, verify, logout } = userSlice.actions;
