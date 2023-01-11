@@ -1,5 +1,4 @@
 .home {
-  min-height: 100vh;
   background: var(--bg-secondary);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -10,6 +9,11 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.posts {
+  margin-top: 1rem;
+  width: 100%;
 }
 
 @media (max-width: 1175px) {

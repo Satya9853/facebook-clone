@@ -2,13 +2,23 @@ import React from "react";
 
 import Style from "./CreatePost.module.css";
 import { Feeling, LiveVideo, Photo } from "../../svg";
+import { useDispatch } from "react-redux";
+import { showCreatePost } from "../../reducers/createPost-slice";
 
 const CreatePost = ({ user }) => {
+  const dispatch = useDispatch();
   return (
     <div className={Style["createPost"]}>
       <div className={Style["createPost_header"]}>
         <img src={user?.user?.picture} alt="user" />
-        <div className={`${Style["open_post"]} hover2`}>What's on your mind, {user?.user?.firstName}</div>
+        <div
+          className={`${Style["open_post"]} hover2`}
+          onClick={() => {
+            dispatch(showCreatePost());
+          }}
+        >
+          What's on your mind, {user?.user?.firstName}
+        </div>
       </div>
       <div className={Style["create_splitter"]}></div>
       <div className={Style["createPost_body"]}>

@@ -10,6 +10,7 @@ const authenticationMiddleware = async (req, res, next) => {
   if (!authHeader || !authHeader.startsWith("Bearer")) throw new UnaunthenticatedError("Authentication failed");
 
   const token = authHeader.split(" ")[1];
+  if (token === "undefined") throw new UnaunthenticatedError("Authentication failed");
 
   const payload = jwt.verify(token, process.env.JWT_SECRET);
   if (!payload) throw new Error();

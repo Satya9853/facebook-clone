@@ -1,3 +1,5 @@
+const Route = require("express").Router();
+
 const {
   register,
   activateAccount,
@@ -10,8 +12,6 @@ const {
 } = require("../controller/user-controller");
 
 const authenticationMiddleware = require("../middleware/authentication-middleware");
-
-const Route = require("express").Router();
 
 Route.route("/register").post(register);
 

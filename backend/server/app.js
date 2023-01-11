@@ -12,6 +12,7 @@ const xss = require("xss-clean");
 const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
+const fileUpload = require("express-fileupload");
 
 // local imports
 const connectDB = require("./db/connectDB");
@@ -25,6 +26,7 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(helmet());
 app.use(xss());
+app.use(fileUpload({ useTempFiles: true }));
 
 // Route Middlewares using dynamically
 fs.readdirSync("./router").map((routes) => app.use("/api/v1", require(`./router/${routes}`)));
