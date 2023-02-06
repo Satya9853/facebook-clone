@@ -2,7 +2,9 @@ const { StatusCodes } = require("http-status-codes");
 
 const { BadRequestError } = require("../errors/error-index");
 const uploadToCloudinary = require("../helper/uploadToCloudinary");
+
 const removeTempFile = require("../helper/removeTempFile");
+const getFromCloudinary = require("../helper/getFromCloudinary");
 
 exports.uploadImages = async (req, res, next) => {
   const { path } = req.body;
@@ -22,4 +24,15 @@ exports.uploadImages = async (req, res, next) => {
   } catch (error) {
     throw new Error(error.message);
   }
+};
+
+exports.listImages = async (req, res, next) => {
+  const { path, sort, max } = req.body;
+  if (!path) throw new BadRequestError("Please provide a valid path");
+
+  const results = getFromCloudinary(path, sort, max);
+
+  if (!results) throw new Error();
+
+  res.status(StatusCodes.OK).json(results);
 };

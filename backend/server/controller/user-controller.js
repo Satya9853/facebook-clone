@@ -4,6 +4,7 @@ const { StatusCodes } = require("http-status-codes");
 
 const UserModel = require("../model/User-model");
 const CodeModel = require("../model/Code-model");
+const PostModel = require("../model/Post-model");
 const { sendVerificationEmail, sendVerificationCode } = require("../helper/mailer");
 const generateUsername = require("../helper/generateUsername");
 const generateCode = require("../helper/generateCode");
@@ -158,4 +159,17 @@ exports.changePassword = async (req, res, next) => {
   await user.save();
 
   res.status(StatusCodes.OK).json({ message: "Password has been successfully changed" });
+};
+
+exports.getProfile = async (req, res, next) => {
+  const { username } = req.params;
+  if (!username) throw new BadRequestError("Please provide correct parameters");
+
+  const user = await UserModel.findOne({ username }).select("-password");
+
+  if (!user) return res.status(StatusCodes.OK).json({ ok: false });
+
+  const posts = await PostModel.find({ user: user._id }).populate("user", "firstName lastName username picture gender");
+
+  res.status(StatusCodes.OK).json({ ...user.toObject(), posts });
 };

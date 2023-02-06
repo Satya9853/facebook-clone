@@ -1,11 +1,11 @@
 import React from "react";
-
-import Style from "./CreatePost.module.css";
-import { Feeling, LiveVideo, Photo } from "../../svg";
 import { useDispatch } from "react-redux";
-import { showCreatePost } from "../../reducers/createPost-slice";
 
-const CreatePost = ({ user }) => {
+import { Feeling, LiveVideo, Photo } from "../../svg";
+import { showCreatePost } from "../../reducers/createPost-slice";
+import Style from "./CreatePost.module.css";
+
+const CreatePost = ({ user, page }) => {
   const dispatch = useDispatch();
   return (
     <div className={Style["createPost"]}>
@@ -30,10 +30,16 @@ const CreatePost = ({ user }) => {
           <Photo color="#4bbf67" />
           Photo/Video
         </div>
-        <div className={`${Style["createPost_icon"]} hover1`}>
-          <Feeling color="#f7b920" />
-          Feeling/Activity
-        </div>
+        {page === "profile" ? (
+          <div className={`${Style["createPost_icon"]} hover1`}>
+            <i className="lifeEvent_icon"></i> Life Event
+          </div>
+        ) : (
+          <div className={`${Style["createPost_icon"]} hover1`}>
+            <Feeling color="#f7b920" />
+            Feeling/Activity
+          </div>
+        )}
       </div>
     </div>
   );

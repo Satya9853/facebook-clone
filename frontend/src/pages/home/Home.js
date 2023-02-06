@@ -24,7 +24,7 @@ const Home = () => {
 
   return (
     <div className={Style["home"]} style={{ height: `${height + 500}px` }}>
-      <Header user={user} />
+      <Header user={user} page="home" />
       <LeftHome user={user} />
       <div className={Style["home_middle"]} ref={middleHomeRef}>
         <Stories />

@@ -9,6 +9,7 @@ const {
   resetPasswordCode,
   verifyResetCode,
   changePassword,
+  getProfile,
 } = require("../controller/user-controller");
 
 const authenticationMiddleware = require("../middleware/authentication-middleware");
@@ -28,5 +29,7 @@ Route.route("/sendResetCodeVerification").post(resetPasswordCode);
 Route.route("/verifyResetCode").post(verifyResetCode);
 
 Route.route("/changePassword").post(changePassword);
+
+Route.route("/getProfile/:username").get(authenticationMiddleware, getProfile);
 
 module.exports = Route;

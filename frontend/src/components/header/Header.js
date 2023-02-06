@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import useClickOutside from "../shared/hooks/clickOutside-hook";
 
-import { ArrowDown, Friends, Gaming, HomeActive, Logo, Market, Menu, Notifications, Search, Watch, Messenger } from "../../svg";
+import { ArrowDown, Friends, Gaming, HomeActive, Logo, Market, Menu, Notifications, Search, Watch, Messenger, Home } from "../../svg";
 import SearchMenu from "./SearchMenu";
 import AllMenu from "./AllMenu/AllMenu";
 import UserMenu from "./UserMenu/UserMenu";
@@ -12,7 +12,7 @@ import Style from "./Header.module.css";
 
 const COLOR = "#65676b";
 
-const Header = ({ user }) => {
+const Header = ({ user, page }) => {
   const [showSearchMenu, setShowSearchMenu] = useState(false);
   const [showAllMenu, setShowAllMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -62,8 +62,8 @@ const Header = ({ user }) => {
       </div>
       {showSearchMenu && <SearchMenu color={COLOR} hideSearchMenuHandler={hideSearchMenuHandler} />}
       <div className={Style["header_middle"]}>
-        <Link to="/" className={`${Style["middle_icon"]} ${Style["active"]}`}>
-          <HomeActive />
+        <Link to="/" className={`${Style["middle_icon"]} ${page === "home" ? Style["active"] : "hover1"}`}>
+          {page === "home" ? <HomeActive /> : <Home color={COLOR} />}
         </Link>
         <Link to="/" className={`${Style["middle_icon"]} hover1`}>
           <Friends color={COLOR} />
@@ -80,7 +80,7 @@ const Header = ({ user }) => {
         </Link>
       </div>
       <div className={Style["header_right"]}>
-        <Link to="/profile" className={`${Style["profile_link"]} hover1`}>
+        <Link to="/profile" className={`${Style["profile_link"]} ${page === "profile" ? Style["active_link"] : ""} hover1`}>
           <img src={user?.user?.picture} alt="profile" />
           <span>{user?.user?.firstName}</span>
         </Link>

@@ -145,6 +145,11 @@ header {
   margin-bottom: 3px;
 }
 
+.active_link {
+  background: var(--light-blue-color);
+  color: var(--blue-color);
+}
+
 .circle_icon {
   position: relative;
   height: 40px;

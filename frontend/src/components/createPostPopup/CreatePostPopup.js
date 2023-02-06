@@ -48,7 +48,7 @@ const CreatePostPopup = () => {
       const postImages = images.map((image) => {
         return dataUriToBlob(image);
       });
-      const path = `${user?.user?.username}/post Images`;
+      const path = `${user?.user?.username}/post_images`;
       let formData = new FormData();
       formData.append("path", path);
       postImages.forEach((image) => formData.append("file", image));

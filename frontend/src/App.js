@@ -44,6 +44,7 @@ function App() {
         <Route element={<LoggedInRoutes />}>
           <Route path="/" element={<Home />} excat={true} />
           <Route path="/profile" element={<UserProfile />} excat={true} />
+          <Route path="/profile/:username" element={<UserProfile />} excat={true} />
           <Route path="/activate/:token" element={<Activate />} />
         </Route>
         <Route element={<NotLoggedInRoutes />}>
