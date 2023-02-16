@@ -50,7 +50,8 @@ exports.activateAccount = async (req, res, next) => {
   const { userID } = jwt.verify(token, process.env.JWT_SECRET);
   const loggedUser = req.user;
 
-  if (loggedUser._id.toString() !== userID) throw new BadRequestError("You don't have the authorization to complete this operation");
+  if (loggedUser._id.toString() !== userID)
+    throw new BadRequestError("You don't have the authorization to complete this operation");
 
   const user = await UserModel.findById(userID);
   if (!user) throw new UnaunthenticatedError("Invalid user, please create your account first");
@@ -58,7 +59,9 @@ exports.activateAccount = async (req, res, next) => {
   if (isVerified) throw new BadRequestError(`The Email-Id ${user.email} is already verified`);
   await user.updateOne({ verified: true });
 
-  res.status(StatusCodes.OK).json({ message: `Email-Id ${user.email} has been successfully verified` });
+  res
+    .status(StatusCodes.OK)
+    .json({ message: `Email-Id ${user.email} has been successfully verified` });
 };
 
 exports.login = async (req, res, next) => {
@@ -69,7 +72,8 @@ exports.login = async (req, res, next) => {
   if (!user) throw new NotFoundError(`The email address ${email} is not connected to any account`);
 
   const isPasswordCorrect = await user.comparePassword(password);
-  if (!isPasswordCorrect) throw new UnaunthenticatedError("The Password you entered is incorrect. Please try again");
+  if (!isPasswordCorrect)
+    throw new UnaunthenticatedError("The Password you entered is incorrect. Please try again");
 
   const token = await user.createJWT("7d");
 
@@ -89,13 +93,16 @@ exports.login = async (req, res, next) => {
 exports.resendVerification = async (req, res, next) => {
   const loggedUser = req.user;
 
-  if (loggedUser.verified === true) throw new BadRequestError(`The Email-Id ${user.email} is already verified`);
+  if (loggedUser.verified === true)
+    throw new BadRequestError(`The Email-Id ${user.email} is already verified`);
 
   const emailVerificationToken = await loggedUser.createJWT("30m");
   const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
   response = sendVerificationEmail(loggedUser.email, loggedUser.firstName, url);
   if (response instanceof Error) throw response;
-  res.status(StatusCodes.OK).json({ message: "Email verification link has been sent to your email" });
+  res
+    .status(StatusCodes.OK)
+    .json({ message: "Email verification link has been sent to your email" });
 };
 
 exports.searchUser = async (req, res, next) => {
@@ -127,7 +134,9 @@ exports.resetPasswordCode = async (req, res, next) => {
   const response = sendVerificationCode(user.email, user.firstName, createdCode.code);
   if (response instanceof Error) throw new Error();
 
-  res.status(StatusCodes.OK).json({ message: "An email verification code has been sent to your email" });
+  res
+    .status(StatusCodes.OK)
+    .json({ message: "An email verification code has been sent to your email" });
 };
 
 exports.verifyResetCode = async (req, res, next) => {
@@ -140,8 +149,6 @@ exports.verifyResetCode = async (req, res, next) => {
 
   const dbCode = await CodeModel.findOne({ user: user._id });
 
-  console.log(code, dbCode.code);
-
   if (code !== dbCode.code) throw new BadRequestError("Verification code is wrong");
 
   res.status(StatusCodes.OK).json({ message: "Verification Code matched" });
@@ -149,9 +156,11 @@ exports.verifyResetCode = async (req, res, next) => {
 
 exports.changePassword = async (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
-  if (!email || !password || !confirmPassword) throw new BadRequestError("Please provide email, password and confirm Password");
+  if (!email || !password || !confirmPassword)
+    throw new BadRequestError("Please provide email, password and confirm Password");
 
-  if (password !== confirmPassword) throw new BadRequestError("Password and confirm Password does not match");
+  if (password !== confirmPassword)
+    throw new BadRequestError("Password and confirm Password does not match");
 
   const user = await UserModel.findOne({ email });
   if (!user) throw new BadRequestError("Account does not exist");
@@ -169,7 +178,18 @@ exports.getProfile = async (req, res, next) => {
 
   if (!user) return res.status(StatusCodes.OK).json({ ok: false });
 
-  const posts = await PostModel.find({ user: user._id }).populate("user", "firstName lastName username picture gender");
+  const posts = await PostModel.find({ user: user._id })
+    .sort({ createdAt: "desc" })
+    .populate("user", "firstName lastName username picture gender");
 
   res.status(StatusCodes.OK).json({ ...user.toObject(), posts });
+};
+
+exports.updateProfilePicture = async (req, res) => {
+  const { url } = req.body;
+  if (!url) throw new BadRequestError("Please send the blob url");
+
+  const updated_user = await UserModel.findByIdAndUpdate(req.user._id, { picture: url });
+  if (!updated_user) throw new Error();
+  res.status(StatusCodes.OK).json({ url });
 };

@@ -9,7 +9,6 @@ cloudinary.config({
 });
 
 const uploadToCloudinary = async (file, path) => {
-  console.log(file);
   return new Promise((resolve, reject) => {
     cloudinary.v2.uploader.upload(file.tempFilePath, { folder: path }, (error, response) => {
       if (error) {

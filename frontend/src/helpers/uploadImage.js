@@ -4,7 +4,9 @@ const uploadImage = async (formdata, path, token) => {
   try {
     const URL = `${process.env.REACT_APP_BACKEND_URL}/uploadImages`;
     const body = formdata;
-    const config = { headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` } };
+    const config = {
+      headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` },
+    };
 
     const response = await axios.post(URL, body, config);
     return response.data;

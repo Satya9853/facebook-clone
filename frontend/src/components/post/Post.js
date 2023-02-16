@@ -9,7 +9,7 @@ import PostMenu from "./PostMenu";
 
 import Style from "./Post.module.css";
 
-const Post = ({ post }) => {
+const Post = ({ post, page }) => {
   const [showReactPopup, setShowReactPopup] = useState(false);
   const [showPostMenu, setShowPostMenu] = useState(false);
   let postImageClass = "";
@@ -22,16 +22,18 @@ const Post = ({ post }) => {
     if (post.images.length >= 5) postImageClass = "grid_5";
   }
   return (
-    <div className={Style["post"]}>
+    <div className={Style["post"]} style={{ width: `${(page = "profile" && "100%")}` }}>
       <div className={Style["post_header"]}>
         <Link to={`/profile/${post.user.username}`} className={Style["post_header_left"]}>
-          <img src={post.user.picture} />
+          <img src={post.user.picture} alt="pic" />
           <div className={Style["header_col"]}>
             <div className={Style["post_profile_name"]}>
               {post.user.firstName} {post.user.lastName}
               <div className={Style["updated_p"]}>
-                {post.type === "profie-picture" && `updated ${post.user.gender === "male" ? "his" : "her"} profile picture`}
-                {post.type === "cover-picture" && `updated ${post.user.gender === "male" ? "his" : "her"} cover picture`}
+                {post.type === "profie-picture" &&
+                  `updated ${post.user.gender === "male" ? "his" : "her"} profile picture`}
+                {post.type === "cover-picture" &&
+                  `updated ${post.user.gender === "male" ? "his" : "her"} cover picture`}
               </div>
             </div>
             <div className={Style["post_profile_privacy_date"]}>
@@ -42,7 +44,10 @@ const Post = ({ post }) => {
             </div>
           </div>
         </Link>
-        <div className={`${Style["post_header_right"]} hover1`} onClick={() => setShowPostMenu((prev) => !prev)}>
+        <div
+          className={`${Style["post_header_right"]} hover1`}
+          onClick={() => setShowPostMenu((prev) => !prev)}
+        >
           <Dots color="#828387" />
         </div>
       </div>
@@ -58,7 +63,9 @@ const Post = ({ post }) => {
               {post.images.slice(0, 5).map((image, index) => (
                 <img src={image.url} key={index} alt="post" className={Style[`img-${index}`]} />
               ))}
-              {post.images.length > 5 && <div className={Style["more_pics_shadow"]}>+{post.images.length - 5}</div>}
+              {post.images.length > 5 && (
+                <div className={Style["more_pics_shadow"]}>+{post.images.length - 5}</div>
+              )}
             </div>
           )}
         </Fragment>
@@ -96,7 +103,13 @@ const Post = ({ post }) => {
         <div className={Style["comments_order"]}></div>
         <CreateComment />
       </div>
-      {showPostMenu && <PostMenu postId={post?.user?._id} noOfImages={post?.images?.length} setShowPostMenu={setShowPostMenu} />}
+      {showPostMenu && (
+        <PostMenu
+          postId={post?.user?._id}
+          noOfImages={post?.images?.length}
+          setShowPostMenu={setShowPostMenu}
+        />
+      )}
     </div>
   );
 };

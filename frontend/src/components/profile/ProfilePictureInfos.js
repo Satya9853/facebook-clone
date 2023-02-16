@@ -1,13 +1,21 @@
 import React from "react";
 
 import Style from "./ProfilePictureInfos.module.css";
+import { useState } from "react";
+import ProfilePicture from "../profilePicture/ProfilePicture";
 
 const ProfilePictureInfos = ({ profile, visitor }) => {
+  const [showProfilePicturePicker, setProfilePicturePicker] = useState(false);
+
   return (
     <div className={Style["profile_img_wrap"]}>
+      {showProfilePicturePicker && <ProfilePicture />}
       <div className={Style["profile_w_left"]}>
         <div className={Style["profile_w_img"]}>
-          <div className={Style["profile_w_bg"]} style={{ backgroundSize: "cover", backgroundImage: `url(${profile.picture})` }}></div>
+          <div
+            className={Style["profile_w_bg"]}
+            style={{ backgroundSize: "cover", backgroundImage: `url(${profile.picture})` }}
+          ></div>
           {!visitor && (
             <div className={`${Style["profile_circle"]} hover1`}>
               <i className="camera_filled_icon"></i>

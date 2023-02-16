@@ -30,7 +30,7 @@ exports.listImages = async (req, res, next) => {
   const { path, sort, max } = req.body;
   if (!path) throw new BadRequestError("Please provide a valid path");
 
-  const results = getFromCloudinary(path, sort, max);
+  const results = await getFromCloudinary(path, sort, max);
 
   if (!results) throw new Error();
 
