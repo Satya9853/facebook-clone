@@ -100,7 +100,7 @@ a {
   right: 0;
   bottom: 0;
   background: rgba(255, 255, 255, 0.768);
-  z-index: 99;
+  z-index: 9999999;
 }
 /* Buttons */
 
@@ -152,7 +152,6 @@ a {
 
 /* Filter */
 .filter_blue {
-  filter: invert(39%) sepia(57%) saturate(200%) saturate(200%) saturate(200%) saturate(200%) saturate(200%) saturate(147.74%) hue-rotate(202deg)
-    brightness(97%) contrast(96%);
+  filter: invert(39%) sepia(57%) saturate(200%) saturate(200%) saturate(200%) saturate(200%) saturate(200%) saturate(147.74%) hue-rotate(202deg) brightness(97%) contrast(96%);
 }
 /* Filter */

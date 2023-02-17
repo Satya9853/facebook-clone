@@ -24,6 +24,7 @@ const RegisterForm = (props) => {
     bMonth: new Date().getMonth() + 1,
     bDay: new Date().getDate(),
     gender: "",
+    cover: "",
   });
 
   const [dateError, setDateError] = useState("");
@@ -99,9 +100,7 @@ const RegisterForm = (props) => {
       .min(2, "Last name should be between 2 to 20 characters")
       .max(20, "Last name should be between 2 to 20 characters")
       .matches(/^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/, "Please Provide a Valid last name"),
-    email: Yup.string()
-      .required("You'll need this when you login and if you ever need to reset your password")
-      .email("Please provide a valid email address"),
+    email: Yup.string().required("You'll need this when you login and if you ever need to reset your password").email("Please provide a valid email address"),
     password: Yup.string()
       .required("Enter combination using numbers, letters, special symbols of atleast 6 characters")
       .min(6, "Password must be of atleast 6 characters")
@@ -126,13 +125,7 @@ const RegisterForm = (props) => {
           <div className={Style["reg_line_header"]}>
             Date of birth <i className="info_icon"></i>
           </div>
-          <DateOfBirthSelect
-            bDay={user.bDay}
-            bMonth={user.bMonth}
-            bYear={user.bYear}
-            handleRegisterChange={handleRegisterChange}
-            dateError={dateError}
-          />
+          <DateOfBirthSelect bDay={user.bDay} bMonth={user.bMonth} bYear={user.bYear} handleRegisterChange={handleRegisterChange} dateError={dateError} />
         </div>
         <div className={Style["reg_col"]}>
           <div className={Style["reg_line_header"]}>
@@ -141,8 +134,8 @@ const RegisterForm = (props) => {
           <GenderSelect handleRegisterChange={handleRegisterChange} genderError={genderError} />
         </div>
         <div className={Style["reg_infos"]}>
-          By clicking Sign Up, you agree to our <span>Terms, Data Policy &nbsp;</span>and <span>Cookie Policy.</span> You may recieve SMS notification
-          from us and can opt out at any time.
+          By clicking Sign Up, you agree to our <span>Terms, Data Policy &nbsp;</span>and <span>Cookie Policy.</span> You may recieve SMS notification from us and can opt out at
+          any time.
         </div>
         <div className={Style["reg_btn_wrapper"]}>
           <button type="submit" className={`blue_btn ${Style["open_signup"]}`}>

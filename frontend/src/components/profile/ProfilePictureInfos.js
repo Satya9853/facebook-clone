@@ -3,21 +3,38 @@ import React from "react";
 import Style from "./ProfilePictureInfos.module.css";
 import { useState } from "react";
 import ProfilePicture from "../profilePicture/ProfilePicture";
+import { useRef } from "react";
 
-const ProfilePictureInfos = ({ profile, visitor }) => {
-  const [showProfilePicturePicker, setProfilePicturePicker] = useState(false);
+const ProfilePictureInfos = ({ profile, visitor, photos }) => {
+  const [showProfilePicturePicker, setShowProfilePicturePicker] =
+    useState(false);
+
+  const profileRef = useRef(null);
 
   return (
     <div className={Style["profile_img_wrap"]}>
-      {showProfilePicturePicker && <ProfilePicture />}
+      {showProfilePicturePicker && (
+        <ProfilePicture
+          setShowProfilePicturePicker={setShowProfilePicturePicker}
+          profileRef={profileRef}
+          photos={photos}
+        />
+      )}
       <div className={Style["profile_w_left"]}>
         <div className={Style["profile_w_img"]}>
           <div
+            ref={profileRef}
             className={Style["profile_w_bg"]}
-            style={{ backgroundSize: "cover", backgroundImage: `url(${profile.picture})` }}
+            style={{
+              backgroundSize: "cover",
+              backgroundImage: `url(${profile.picture})`,
+            }}
           ></div>
           {!visitor && (
-            <div className={`${Style["profile_circle"]} hover1`}>
+            <div
+              className={`${Style["profile_circle"]} hover1`}
+              onClick={() => setShowProfilePicturePicker(true)}
+            >
               <i className="camera_filled_icon"></i>
             </div>
           )}
@@ -36,7 +53,11 @@ const ProfilePictureInfos = ({ profile, visitor }) => {
       ) : (
         <div className={Style["profile_w_right"]}>
           <div className="blue_btn">
-            <img src="../../../icons/plus.png" alt="add" className={Style["invert"]} />
+            <img
+              src="../../../icons/plus.png"
+              alt="add"
+              className={Style["invert"]}
+            />
             <span>Add to story</span>
           </div>
           <div className="grey_btn">

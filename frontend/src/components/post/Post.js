@@ -21,6 +21,7 @@ const Post = ({ post, page }) => {
     if (post.images.length === 4) postImageClass = "grid_4";
     if (post.images.length >= 5) postImageClass = "grid_5";
   }
+
   return (
     <div className={Style["post"]} style={{ width: `${(page = "profile" && "100%")}` }}>
       <div className={Style["post_header"]}>
@@ -30,10 +31,8 @@ const Post = ({ post, page }) => {
             <div className={Style["post_profile_name"]}>
               {post.user.firstName} {post.user.lastName}
               <div className={Style["updated_p"]}>
-                {post.type === "profie-picture" &&
-                  `updated ${post.user.gender === "male" ? "his" : "her"} profile picture`}
-                {post.type === "cover-picture" &&
-                  `updated ${post.user.gender === "male" ? "his" : "her"} cover picture`}
+                {post.type === "profie-picture" && `updated ${post.user.gender === "male" ? "his" : "her"} profile picture`}
+                {post.type === "cover-picture" && `updated ${post.user.gender === "male" ? "his" : "her"} cover picture`}
               </div>
             </div>
             <div className={Style["post_profile_privacy_date"]}>
@@ -44,10 +43,7 @@ const Post = ({ post, page }) => {
             </div>
           </div>
         </Link>
-        <div
-          className={`${Style["post_header_right"]} hover1`}
-          onClick={() => setShowPostMenu((prev) => !prev)}
-        >
+        <div className={`${Style["post_header_right"]} hover1`} onClick={() => setShowPostMenu((prev) => !prev)}>
           <Dots color="#828387" />
         </div>
       </div>
@@ -55,7 +51,7 @@ const Post = ({ post, page }) => {
         <div className={Style["post_bg"]} style={{ backgroundImage: `url(${post.background})` }}>
           <div className={Style["post_bg_text"]}>{post.text}</div>
         </div>
-      ) : (
+      ) : post.type === null ? (
         <Fragment>
           <div className={Style["post_text"]}>{post.text}</div>
           {post.images && post.images.length && (
@@ -63,12 +59,21 @@ const Post = ({ post, page }) => {
               {post.images.slice(0, 5).map((image, index) => (
                 <img src={image.url} key={index} alt="post" className={Style[`img-${index}`]} />
               ))}
-              {post.images.length > 5 && (
-                <div className={Style["more_pics_shadow"]}>+{post.images.length - 5}</div>
-              )}
+              {post.images.length > 5 && <div className={Style["more_pics_shadow"]}>+{post.images.length - 5}</div>}
             </div>
           )}
         </Fragment>
+      ) : post.type === "profile-picture" ? (
+        <div className={Style["post_profile_wrap"]}>
+          <div className={Style["post_updated_bg"]}>
+            <img src={post.user.cover} alt="cover" />
+          </div>
+          <img src={post.images[0].url} alt="post" className={Style["post_updated_picture"]} />
+        </div>
+      ) : (
+        <div className={Style["post_cover_wrap"]}>
+          <img src={post.images[0].url} alt="cover" />
+        </div>
       )}
       <div className={Style["post_infos"]}>
         <div className={Style["reacts_count"]}>
@@ -103,13 +108,7 @@ const Post = ({ post, page }) => {
         <div className={Style["comments_order"]}></div>
         <CreateComment />
       </div>
-      {showPostMenu && (
-        <PostMenu
-          postId={post?.user?._id}
-          noOfImages={post?.images?.length}
-          setShowPostMenu={setShowPostMenu}
-        />
-      )}
+      {showPostMenu && <PostMenu postId={post?.user?._id} noOfImages={post?.images?.length} setShowPostMenu={setShowPostMenu} />}
     </div>
   );
 };

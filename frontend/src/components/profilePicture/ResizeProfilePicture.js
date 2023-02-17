@@ -1,23 +1,28 @@
 import { useState, useCallback, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Cropper from "react-easy-crop";
+import { PulseLoader } from "react-spinners";
+import Cookies from "js-cookie";
 
 import getCroppedImg from "../../helpers/getCroppedImg";
 import uploadImage from "../../helpers/uploadImage";
-
-import Style from "./ProfilePicture.module.css";
-import "./crooper.css";
 import { updateImage } from "../../helpers/updateImage";
 import { createPostRequest } from "../../helpers/createPost-request";
 
-const ResizeProfilePicture = ({ setImage, image, setError }) => {
+import Style from "./ProfilePicture.module.css";
+import "./cropper.css";
+import { updatePicture } from "../../reducers/User-slice";
+
+const ResizeProfilePicture = ({ setImage, image, setError, setShowProfilePicturePicker, profileRef }) => {
   const [description, setDescription] = useState("");
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [loading, setLoading] = useState(false);
   const sliderRef = useRef(null);
 
   const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
@@ -45,6 +50,7 @@ const ResizeProfilePicture = ({ setImage, image, setError }) => {
           return img;
         }
       } catch (error) {
+        setLoading(false);
         console.log(error);
       }
     },
@@ -53,6 +59,7 @@ const ResizeProfilePicture = ({ setImage, image, setError }) => {
 
   const updateProfilePicture = async () => {
     try {
+      setLoading(true);
       const img = await getCroppedImage();
       const blob = await fetch(img).then((data) => data.blob());
       const path = `${user?.user?.username}/profile_pictures`;
@@ -63,22 +70,24 @@ const ResizeProfilePicture = ({ setImage, image, setError }) => {
       const imageUrl = res.images[0].url;
       const updatedImage = await updateImage(imageUrl, user?.user?.token);
       if (updatedImage === "Success") {
-        const newPost = await createPostRequest(
-          "profile-picture",
-          null,
-          description,
-          res.images,
-          user?.user?.id,
-          user?.user?.token
-        );
+        const newPost = await createPostRequest("profile-picture", null, description, res.images, user?.user?.id, user?.user?.token);
         if (newPost === "Success") {
+          setLoading(false);
+          setImage("");
+          profileRef.current.style.backgroundImage = `url(${imageUrl})`;
+          Cookies.set("user", JSON.stringify({ ...user?.user, picture: imageUrl }));
+          dispatch(updatePicture(imageUrl));
+          setShowProfilePicturePicker(false);
         } else {
+          setLoading(false);
           setError(newPost);
         }
       } else {
+        setLoading(false);
         setError(updatedImage);
       }
     } catch (error) {
+      setLoading(false);
       setError(error.response.data.error);
     }
   };
@@ -100,7 +109,7 @@ const ResizeProfilePicture = ({ setImage, image, setError }) => {
         ></textarea>
       </div>
       <div className={Style["update_center"]}>
-        <div className={Style["crooper"]}>
+        <div className={Style["cropper"]}>
           <Cropper
             image={image}
             crop={crop}
@@ -117,15 +126,7 @@ const ResizeProfilePicture = ({ setImage, image, setError }) => {
           <div className={`${Style["slider_circle"]} hover1`} onClick={zoomOut}>
             <i className="minus_icon"></i>
           </div>
-          <input
-            type="range"
-            min={1}
-            max={3}
-            value={zoom}
-            step={0.2}
-            onChange={(event) => setZoom(event.target.value)}
-            ref={sliderRef}
-          />
+          <input type="range" min={1} max={3} value={zoom} step={0.2} onChange={(event) => setZoom(event.target.value)} ref={sliderRef} />
           <div className={`${Style["slider_circle"]} hover1`} onClick={zoomIn}>
             <i className="plus_icon"></i>
           </div>
@@ -144,9 +145,11 @@ const ResizeProfilePicture = ({ setImage, image, setError }) => {
         Your profile picture is public
       </div>
       <div className={Style["update_submit_wrap"]}>
-        <div className={Style["blue_link"]}>Cancel</div>
-        <button className="blue_btn" onClick={() => updateProfilePicture()}>
-          Save
+        <div className={Style["blue_link"]} onClick={() => setImage("")}>
+          Cancel
+        </div>
+        <button className="blue_btn" disabled={loading} onClick={() => updateProfilePicture()}>
+          {loading ? <PulseLoader color="#fff" size={5} /> : "Save"}
         </button>
       </div>
     </div>

@@ -11,6 +11,7 @@ const {
   changePassword,
   getProfile,
   updateProfilePicture,
+  updateCoverPicture,
 } = require("../controller/user-controller");
 
 const authenticationMiddleware = require("../middleware/authentication-middleware");
@@ -34,5 +35,7 @@ Route.route("/changePassword").post(changePassword);
 Route.route("/getProfile/:username").get(authenticationMiddleware, getProfile);
 
 Route.route("/updateProfilePicture").put(authenticationMiddleware, updateProfilePicture);
+
+Route.route("/updateCoverPicture").put(authenticationMiddleware, updateCoverPicture);
 
 module.exports = Route;
