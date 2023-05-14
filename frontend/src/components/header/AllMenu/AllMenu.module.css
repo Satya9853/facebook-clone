@@ -133,7 +133,8 @@
 
 @media (max-width: 400px) {
   .all_menu {
-    left: -15rem;
+    width: 310px;
+    left: -10rem;
   }
 }
 

@@ -1,25 +1,21 @@
 import React from "react";
-
-import Style from "./ProfilePictureInfos.module.css";
 import { useState } from "react";
-import ProfilePicture from "../profilePicture/ProfilePicture";
 import { useRef } from "react";
 
-const ProfilePictureInfos = ({ profile, visitor, photos }) => {
-  const [showProfilePicturePicker, setShowProfilePicturePicker] =
-    useState(false);
+import ProfilePicture from "../profilePicture/ProfilePicture";
+import Friendship from "./Friendship";
+
+import Style from "./ProfilePictureInfos.module.css";
+import { Link } from "react-router-dom";
+
+const ProfilePictureInfos = ({ profile, visitor, photos, otherName }) => {
+  const [showProfilePicturePicker, setShowProfilePicturePicker] = useState(false);
 
   const profileRef = useRef(null);
 
   return (
     <div className={Style["profile_img_wrap"]}>
-      {showProfilePicturePicker && (
-        <ProfilePicture
-          setShowProfilePicturePicker={setShowProfilePicturePicker}
-          profileRef={profileRef}
-          photos={photos}
-        />
-      )}
+      {showProfilePicturePicker && <ProfilePicture setShowProfilePicturePicker={setShowProfilePicturePicker} profileRef={profileRef} photos={photos} />}
       <div className={Style["profile_w_left"]}>
         <div className={Style["profile_w_img"]}>
           <div
@@ -27,37 +23,41 @@ const ProfilePictureInfos = ({ profile, visitor, photos }) => {
             className={Style["profile_w_bg"]}
             style={{
               backgroundSize: "cover",
-              backgroundImage: `url(${profile.picture})`,
+              backgroundImage: `url(${profile?.picture})`,
             }}
           ></div>
           {!visitor && (
-            <div
-              className={`${Style["profile_circle"]} hover1`}
-              onClick={() => setShowProfilePicturePicker(true)}
-            >
+            <div className={`${Style["profile_circle"]} hover1`} onClick={() => setShowProfilePicturePicker(true)}>
               <i className="camera_filled_icon"></i>
             </div>
           )}
         </div>
         <div className={Style["profile_w_col"]}>
           <div className={Style["profile_name"]}>
-            {profile.firstName} {profile.lastName}
-            <div className={Style["othername"]}>(Other name)</div>
+            <span>
+              {profile?.firstName} {profile?.lastName}
+            </span>
+            <div className={Style["othername"]}>{otherName ? `(${otherName})` : ""}</div>
           </div>
-          <div className={Style["profile_friend_count"]}></div>
-          <div className={Style["profile_friend_imgs"]}></div>
+          <div className={Style["profile_friend_count"]}>
+            {profile?.friends?.length === 0 ? "" : profile?.friends?.length === 1 ? "1 friend" : `${profile?.friends?.length} friends`}
+          </div>
+          <div className={Style["profile_friend_imgs"]}>
+            {profile?.friends &&
+              profile?.friends.slice(0, 6).map((friend, index) => (
+                <Link to={`/profile/${friend.username}`} key={index}>
+                  <img src={friend.picture} alt="" style={{ transform: `trnslateX(${-index * 7}px)`, zIndex: `${index}` }} />
+                </Link>
+              ))}
+          </div>
         </div>
       </div>
       {visitor ? (
-        ""
+        <Friendship friendshipp={profile?.friendship} profileID={profile._id} />
       ) : (
         <div className={Style["profile_w_right"]}>
           <div className="blue_btn">
-            <img
-              src="../../../icons/plus.png"
-              alt="add"
-              className={Style["invert"]}
-            />
+            <img src="../../../icons/plus.png" alt="add" className={Style["invert"]} />
             <span>Add to story</span>
           </div>
           <div className="grey_btn">

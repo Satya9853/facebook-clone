@@ -83,25 +83,33 @@ const UserSchema = new mongoose.Schema(
       default: false,
     },
 
-    friends: {
-      type: Array,
-      default: [],
-    },
+    friends: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "User",
+      },
+    ],
 
-    following: {
-      type: Array,
-      default: [],
-    },
+    following: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "User",
+      },
+    ],
 
-    followers: {
-      type: Array,
-      default: [],
-    },
+    followers: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "User",
+      },
+    ],
 
-    requests: {
-      type: Array,
-      default: [],
-    },
+    requests: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "User",
+      },
+    ],
 
     search: [
       {

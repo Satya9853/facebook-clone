@@ -70,6 +70,30 @@
   font-size: 20px;
 }
 
+.profile_friend_count {
+  text-align: center;
+  transform: translateY(-5px);
+  font-weight: 600;
+}
+
+.profile_friend_imgs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-3px);
+}
+
+.profile_friend_imgs img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px var(--shadow-1);
+}
+
+.profile_friend_imgs img:hover {
+  filter: brightness(110%);
+}
+
 @media (max-width: 900px) {
   .profile_w_left {
     flex-direction: column;
@@ -94,5 +118,19 @@
   .profile_name {
     padding-bottom: 10px;
     flex-direction: column;
+  }
+
+  .othername {
+    transform: translateY(-10px);
+  }
+
+  .profile_friend_count {
+    text-align: center;
+    transform: translateY(-14px);
+  }
+
+  .profile_friend_imgs {
+    justify-content: center;
+    transform: translateY(-13px);
   }
 }

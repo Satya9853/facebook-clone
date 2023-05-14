@@ -23,7 +23,7 @@
 
 .pictureBox {
   width: 700px !important;
-  height: 62vh;
+  height: 700px;
 }
 
 .update_picture_wrap {
@@ -254,4 +254,10 @@
 
 .old_pictures:first-of-type {
   border-bottom: 1px solid var(--bg-third);
+}
+
+@media (max-width: 720px) {
+  .pictureBox {
+    width: 98% !important;
+  }
 }

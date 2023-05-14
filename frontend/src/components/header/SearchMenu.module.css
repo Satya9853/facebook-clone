@@ -102,5 +102,9 @@
 }
 
 /* Media Queries */
-
+@media (max-width: 400px) {
+  .search_area {
+    width: 310px;
+  }
+}
 /* Media Queries */

@@ -57,4 +57,10 @@
   }
 }
 
+@media (max-width: 400px) {
+  .send_verification {
+    width: 98%;
+    margin: 0 auto;
+  }
+}
 /* media query */

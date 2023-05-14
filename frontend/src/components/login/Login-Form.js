@@ -43,6 +43,7 @@ const LoginFrom = (props) => {
       Cookies.set("user", JSON.stringify(user));
       navigate("/");
     } catch (error) {
+      console.log(error);
       setIsLoading(false);
       setError(error.response.data.error);
     }

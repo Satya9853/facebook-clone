@@ -81,6 +81,7 @@ exports.login = async (req, res, next) => {
       lastName: user.lastName,
       verified: user.verified,
       picture: user.picture,
+      details: user.details ? user.details : undefined,
       token,
     },
   });
@@ -161,15 +162,39 @@ exports.changePassword = async (req, res, next) => {
 
 exports.getProfile = async (req, res, next) => {
   const { username } = req.params;
+
   if (!username) throw new BadRequestError("Please provide correct parameters");
 
-  const user = await UserModel.findOne({ username }).select("-password");
+  const friendship = {
+    friends: false,
+    following: false,
+    requestSent: false,
+    requestRecieved: false,
+  };
 
+  const loggedInUser = await UserModel.findById(req.user._id);
+
+  const user = await UserModel.findOne({ username }).select("-password");
   if (!user) return res.status(StatusCodes.OK).json({ ok: false });
 
-  const posts = await PostModel.find({ user: user._id }).sort({ createdAt: "desc" }).populate("user", "firstName lastName username picture cover gender");
+  if (loggedInUser.friends.includes(user._id) && user.friends.includes(loggedInUser._id)) {
+    friendship.friends = true;
+  }
 
-  res.status(StatusCodes.OK).json({ ...user.toObject(), posts });
+  if (loggedInUser.following.includes(user._id) && user.followers.includes(loggedInUser._id)) {
+    friendship.following = true;
+  }
+
+  if (loggedInUser.requests.includes(user._id)) {
+    friendship.requestRecieved = true;
+  }
+
+  if (user.requests.includes(loggedInUser._id)) {
+    friendship.requestSent = true;
+  }
+  const posts = await PostModel.find({ user: user._id }).sort({ createdAt: "desc" }).populate("user", "firstName lastName username picture cover gender");
+  await user.populate("friends", "firstName lastName username picture");
+  res.status(StatusCodes.OK).json({ ...user.toObject(), posts, friendship });
 };
 
 exports.updateProfilePicture = async (req, res) => {
@@ -188,4 +213,207 @@ exports.updateCoverPicture = async (req, res) => {
   const updated_user = await UserModel.findByIdAndUpdate(req.user._id, { cover: url });
   if (!updated_user) throw new Error();
   res.status(StatusCodes.OK).json({ url });
+};
+
+exports.updateDetails = async (req, res, next) => {
+  const { infos } = req.body;
+  if (!infos) throw new BadRequestError("Please provide the infos");
+
+  const updated = await UserModel.findByIdAndUpdate(req.user.id, { details: infos }, { new: true });
+  if (!updated) throw new Error();
+
+  res.status(StatusCodes.OK).json({ details: updated.details });
+};
+
+exports.addFriend = async (req, res, next) => {
+  if (req.user._id === req.params.id) {
+    throw new BadRequestError("The logged in user id and the friend request id is same");
+  }
+
+  const sender = await UserModel.findById(req.user._id);
+  const reciever = await UserModel.findById(req.params.id);
+
+  if (reciever.requests.includes(req.user._id)) {
+    throw new BadRequestError("Friends request already sent");
+  }
+
+  if (reciever.friends.includes(req.user._id)) {
+    throw new BadRequestError("User is already friends with the reciever");
+  }
+
+  await reciever.updateOne({
+    $push: { requests: sender._id },
+  });
+
+  await reciever.updateOne({
+    $push: { followers: sender._id },
+  });
+
+  await sender.updateOne({
+    $push: { following: reciever._id },
+  });
+
+  res.status(StatusCodes.OK).json({ message: "firend request successfully sent" });
+};
+
+exports.cancelRequest = async (req, res, next) => {
+  if (req.user._id === req.params.id) {
+    throw new BadRequestError("The logged in user id and the cancel request id is same");
+  }
+
+  const sender = await UserModel.findById(req.user._id);
+  const reciever = await UserModel.findById(req.params.id);
+
+  if (!reciever.requests.includes(req.user._id)) {
+    throw new BadRequestError("reciever does not have the request");
+  }
+
+  if (reciever.friends.includes(req.user._id)) {
+    throw new BadRequestError("User is already friends with the reciever");
+  }
+
+  await reciever.updateOne({
+    $pull: { requests: sender._id },
+  });
+
+  await reciever.updateOne({
+    $pull: { followers: sender._id },
+  });
+
+  await sender.updateOne({
+    $pull: { following: reciever._id },
+  });
+
+  res.status(StatusCodes.OK).json({ message: "Cancel request successfully sent" });
+};
+
+exports.follow = async (req, res, next) => {
+  if (req.user._id === req.params.id) {
+    throw new BadRequestError("The logged in user id and the request id is same");
+  }
+
+  const sender = await UserModel.findById(req.user._id);
+  const reciever = await UserModel.findById(req.params.id);
+
+  if (reciever.followers.includes(req.user._id)) {
+    throw new BadRequestError("already following");
+  }
+
+  if (sender.following.includes(reciever._id)) {
+    throw new BadRequestError("already following");
+  }
+
+  await reciever.updateOne({
+    $push: { followers: sender._id },
+  });
+
+  await sender.updateOne({
+    $push: { following: reciever._id },
+  });
+
+  res.status(StatusCodes.OK).json({ message: "Sucessfully following" });
+};
+
+exports.unfollow = async (req, res, next) => {
+  if (req.user._id === req.params.id) {
+    throw new BadRequestError("The logged in user id and the request id is same");
+  }
+
+  const sender = await UserModel.findById(req.user._id);
+  const reciever = await UserModel.findById(req.params.id);
+
+  if (!reciever.followers.includes(req.user._id)) {
+    throw new BadRequestError("logged in user is not following the requested user");
+  }
+
+  if (!sender.following.includes(reciever._id)) {
+    throw new BadRequestError("logged in user is not following the requested user");
+  }
+
+  await reciever.updateOne({
+    $pull: { followers: sender._id },
+  });
+
+  await sender.updateOne({
+    $pull: { following: reciever._id },
+  });
+
+  res.status(StatusCodes.OK).json({ message: "Sucessfully unfollowed" });
+};
+
+exports.acceptRequest = async (req, res, next) => {
+  if (req.user._id === req.params.id) {
+    throw new BadRequestError("The logged in user id and the request id is same");
+  }
+
+  const reciever = await UserModel.findById(req.user._id);
+  const sender = await UserModel.findById(req.params.id);
+
+  if (!reciever.requests.includes(sender._id)) {
+    throw new BadRequestError("no request found of the sender");
+  }
+
+  await reciever.update({
+    $push: { friends: sender._id, following: sender._id },
+  });
+
+  await sender.update({
+    $push: { friends: reciever._id, followers: reciever._id },
+  });
+
+  await reciever.updateOne({
+    $pull: { requests: sender._id },
+  });
+
+  res.status(StatusCodes.OK).json({ message: "Sucessfully added friend" });
+};
+
+exports.unfriend = async (req, res, next) => {
+  if (req.user._id === req.params.id) {
+    throw new BadRequestError("The logged in user id and the request id is same");
+  }
+
+  const sender = await UserModel.findById(req.user._id);
+  const reciever = await UserModel.findById(req.params.id);
+
+  if (!reciever.friends.includes(sender._id)) {
+    throw new BadRequestError("You are not friend with the requested user");
+  }
+
+  if (!sender.friends.includes(reciever._id)) {
+    throw new BadRequestError("You are not friend with the requested user");
+  }
+
+  await reciever.update({
+    $pull: { friends: sender._id, following: sender._id, followers: sender._id },
+  });
+
+  await sender.update({
+    $pull: { friends: reciever._id, following: reciever._id, followers: reciever._id },
+  });
+
+  res.status(StatusCodes.OK).json({ message: "Sucessfully  unfriended" });
+};
+
+exports.deleteRequest = async (req, res, next) => {
+  if (req.user._id === req.params.id) {
+    throw new BadRequestError("The logged in user id and the request id is same");
+  }
+
+  const reciever = await UserModel.findById(req.user._id);
+  const sender = await UserModel.findById(req.params.id);
+
+  if (!reciever.requests.includes(sender._id)) {
+    throw new BadRequestError("You don't have the request from the user");
+  }
+
+  await reciever.update({
+    $pull: { requests: sender._id, followers: sender._id },
+  });
+
+  await sender.update({
+    $pull: { following: reciever._id },
+  });
+
+  res.status(StatusCodes.OK).json({ message: "Sucessfully  deleteted Request" });
 };

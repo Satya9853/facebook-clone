@@ -88,6 +88,12 @@
   }
 }
 
+@media (max-width: 900px) {
+  .createPost {
+    width: 100% !important;
+  }
+}
+
 @media (max-width: 885px) {
   .createPost {
     width: 110%;
@@ -106,5 +112,11 @@
   }
   .createPost_icon svg {
     width: 20px;
+  }
+}
+
+@media (max-width: 400px) {
+  .createPost {
+    margin-top: 1rem;
   }
 }

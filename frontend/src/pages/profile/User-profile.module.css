@@ -41,9 +41,36 @@
   color: var(--color-secondary);
 }
 
+.scrollFixed .profile_left {
+  position: fixed;
+  width: 360px;
+}
+.scrollFixed .profile_right {
+  margin-left: 370px;
+  width: 504px;
+}
+
+.showless .profile_left {
+  bottom: 10px;
+}
+.showmore .profile_left {
+  top: 64px;
+}
+
 @media (max-width: 900px) {
   .profile_grid {
     grid-template-columns: 1fr;
     width: 95%;
+  }
+
+  .bottom_container {
+    padding: 5px;
+  }
+}
+
+@media (max-width: 400px) {
+  .posts {
+    width: 100%;
+    margin: 0 auto;
   }
 }

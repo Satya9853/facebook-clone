@@ -143,3 +143,9 @@
 .save_changes_right button:last-of-type {
   width: 160px;
 }
+
+@media (max-width: 650px) {
+  .update_cover_wrapper {
+    bottom: 3rem;
+  }
+}

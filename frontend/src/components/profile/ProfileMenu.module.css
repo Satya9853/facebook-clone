@@ -50,3 +50,9 @@
   margin-top: 2px;
   margin-left: 2px;
 }
+
+@media (max-width: 650px) {
+  .profile_menu_wrap {
+    display: none;
+  }
+}

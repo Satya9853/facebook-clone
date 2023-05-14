@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import EmojiPicker from "emoji-picker-react";
+import { useMediaQuery } from "react-responsive";
 
 import Style from "./CreatePostPopup.module.css";
 
@@ -50,6 +51,10 @@ const EmojiPickerBackgrounds = ({ text, user, setText, type2, background, setBac
     bgRef.current.classList.remove(Style["bg_handler"]);
   };
 
+  const sm = useMediaQuery({
+    query: "(max-width:550px)",
+  });
+
   return (
     <div className={type2 ? Style["image_input"] : ""}>
       <div className={!type2 ? Style["flex_center"] : ""} ref={bgRef}>
@@ -57,7 +62,7 @@ const EmojiPickerBackgrounds = ({ text, user, setText, type2, background, setBac
           ref={textAreaRef}
           maxLength="250"
           value={text}
-          className={`${Style["post_input"]} ${type2 ? Style["input2"] : ""}`}
+          className={`${Style["post_input"]} ${type2 ? Style["input2"] : ""} ${sm && !showBackgroundPicker ? Style["l0"] : ""}`}
           placeholder={`What's on your mind, ${user?.user?.firstName}`}
           onChange={(event) => setText(event.target.value)}
           style={{ paddingTop: `${background ? Math.abs(textAreaRef.current.value.length * 0.1 - 30) : "0"}%` }}
